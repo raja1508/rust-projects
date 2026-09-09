@@ -3,7 +3,7 @@ use rand::Rng;
 use colored::*; 
 
 fn main() {
-    println!("Guess game");
+    println!("Let's go Guess game");
     println!("Please enter your guess");
 
     let secret_number= rand::thread_rng().gen_range(1..=100) as u32; 

@@ -1,1 +1,5 @@
 /**/target
+#  ssh-add -D                        # clear all identities
+#  ssh-add ~/.ssh/id_ed25519         # re-add, enter passphrase if prompted
+#  ssh-add -l                        # confirm it's listed
+#  ssh -T git@github.com
