@@ -6,6 +6,7 @@ use std::fs::File;
 use std::time::Instant; 
 use zip::write::FileOptions;
 use zip::{CompressionMethod, ZipWriter}; 
+use std::env::args; 
 
 // hello.txt
 // Zip file: compr_hello
@@ -18,29 +19,45 @@ use zip::{CompressionMethod, ZipWriter};
 // Source file size: 6667711
 // Zip file size: 6359125
 // Time taken for compression 8.770889608s
-// 3) Zstd
+// 3) Bip2
 // Source file size: 6667711
 // Zip file size: 5932117
 // Time taken for compression 14.368509909s
+// 4) Zstd
+// Source file size: 6667711
+// Zip file size: 5601543
+// Time taken for compression 8.833812718s
 fn main() {
-    let mut source_file: String= String::new(); 
-    let mut zip_file: String = String::new(); 
-    let mut compression_choice: String = String::new(); 
+    let args: Vec<String> = args().collect();
+    
+    if args.len() < 4 {
+        println!("Cli format: source_file zip_file compression compression_choice"); 
+        println!("Choose a compression method: "); 
+        println!("1)Deflated 2)Stored 3)Bzip2 4)Zstd");
+        return; 
+    }
+    
+    // let mut source_file: String= String::new(); 
+    // let mut zip_file: String = String::new(); 
+    // let mut compression_choice: String = String::new(); 
 
-    println!("Enter the path of the source file to compress: ");
-    io::stdin().read_line(&mut source_file).unwrap();
-    let source = source_file.trim();
+    let source_file = args.iter().nth(1).unwrap(); 
+    let zip_file = args.iter().nth(2).unwrap(); 
+    let compression_choice = args.iter().nth(3).unwrap(); 
+    // println!("Enter the path of the source file to compress: ");
+    // io::stdin().read_line(&mut source_file).unwrap();
+    // let source = source_file.trim();
 
-    println!("Enter the destination path of the zip file: "); 
-    io::stdin().read_line(&mut zip_file).unwrap();
-    let zip_file = zip_file.trim();  
+    // println!("Enter the destination path of the zip file: "); 
+    // io::stdin().read_line(&mut zip_file).unwrap();
+    // let zip_file = zip_file.trim();  
 
-    println!("Choose a compression method: "); 
-    println!("1)Deflated 2)Stored 3)Bzip2 4)Zstd"); 
-    io::stdin().read_line(&mut compression_choice).unwrap(); 
-    let compression_choice = compression_choice.trim(); 
+    // println!("Choose a compression method: "); 
+    // println!("1)Deflated 2)Stored 3)Bzip2 4)Zstd"); 
+    // io::stdin().read_line(&mut compression_choice).unwrap(); 
+    // let compression_choice = compression_choice.trim(); 
 
-    let compression_method = match compression_choice {
+    let compression_method = match compression_choice.as_str() {
         "1" => CompressionMethod::Deflated ,
         "2" => CompressionMethod::Stored, 
         "3" => CompressionMethod::Bzip2, 
@@ -51,11 +68,11 @@ fn main() {
     let start = Instant::now(); 
 
     
-    println!("Source file: {}", source); 
+    println!("Source file: {}", source_file); 
     println!("Zip file: {}", zip_file); 
     println!("Compression method: {}", compression_method); 
     
-    compress_to_zip(source, zip_file, compression_method).unwrap();
+    compress_to_zip(source_file, zip_file, compression_method).unwrap();
 
     let elapse_time = start.elapsed();
     println!("Time taken for compression {:?}", elapse_time); 
