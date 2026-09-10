@@ -44,11 +44,11 @@ pub fn zip_extraction(zip_file: &String, output_folder: &String) -> Result<(), B
         } 
         
         let output_path = output_folder_path.join(&name); 
-        let mut output = File::create(output_path)?; 
         
         if name.ends_with("/") {
-            fs::create_dir_all(output_folder)?; 
+            fs::create_dir_all(output_path)?; 
         } else {
+            let mut output = File::create(output_path)?; 
             io::copy(&mut entry, &mut output)?; 
         }
 
