@@ -1,0 +1,10 @@
+name = "Raja Rana"
+age = 21
+
+[address]
+landmark = "Near mamta hotel, Haldapani"
+nearCity = "Gopeshwar"
+state = "Uttarkhand"
+district = "Chamoli"
+country = "India"
+pincode = "246401"
