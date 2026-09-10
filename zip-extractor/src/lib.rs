@@ -1,11 +1,11 @@
-use std::{eprintln, fs::File, io::{self, Read}, println};
+use std::{eprintln, fs::{self, File}, io::{self}, path::Path};
 
 use zip::{ZipArchive};
 
 #[derive(Debug)]
 pub struct  ZipConfig {
     pub zip_file: String,
-    pub output_path: String
+    pub output_folder: String
 } 
 
 impl ZipConfig {
@@ -16,7 +16,7 @@ impl ZipConfig {
 
         let zip_config = ZipConfig {
            zip_file : args.iter().nth(1).unwrap().clone(),
-           output_path: args.iter().nth(2).unwrap().clone()
+           output_folder: args.iter().nth(2).unwrap().clone()
         }; 
 
         Ok(zip_config)
@@ -24,7 +24,7 @@ impl ZipConfig {
     }
 }
 
-pub fn zip_extraction(zip_file: &String, _output_path: &String) -> Result<(), Box<dyn std::error::Error>> {
+pub fn zip_extraction(zip_file: &String, output_folder: &String) -> Result<(), Box<dyn std::error::Error>> {
     let zip_file = File::open(zip_file)? ; 
     let mut zip_archive =  ZipArchive::new(zip_file)?; 
 
@@ -32,22 +32,33 @@ pub fn zip_extraction(zip_file: &String, _output_path: &String) -> Result<(), Bo
         let mut entry = zip_archive.by_index(i)?; 
 
         // logging some entry details
-        let name = entry.name(); 
+        let name = entry.name().to_owned(); 
         let if_folder = entry.is_file(); 
         let file_or_folder = if !if_folder { "Folder" } else { "File" }; 
         eprintln!("Entry {}: \n Name: {} \n File/Folder: {}", i, name, file_or_folder ); 
 
-        // creating output files 
-        let mut ouput = File::create(_output_path)?; 
+        // creating output folder and files 
+        let output_folder_path = Path::new(output_folder);
+        if !output_folder_path.exists(){
+            std::fs::create_dir(output_folder)?; 
+        } 
+        
+        let output_path = output_folder_path.join(&name); 
+        let mut output = File::create(output_path)?; 
+        
+        if name.ends_with("/") {
+            fs::create_dir_all(output_folder)?; 
+        } else {
+            io::copy(&mut entry, &mut output)?; 
+        }
 
 
         // extracting the contents of zip file
-        io::copy(&mut entry, &mut ouput)?; 
 
-        let mut buffer = Vec::new(); 
-        entry.read_to_end(&mut buffer)?; 
-        let content = String::from_utf8(buffer)?; 
-        println!("Contents: {}", content); 
+        // let mut buffer = Vec::new(); 
+        // entry.read_to_end(&mut buffer)?; 
+        // let content = String::from_utf8(buffer)?; 
+        // println!("Contents: {}", content); 
     }
 
     Ok(())

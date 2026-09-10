@@ -9,6 +9,6 @@ fn main() {
     });  
 
     eprintln!("{:?}", zip_conf); 
-    zip_extraction(&zip_conf.zip_file, &zip_conf.output_path).unwrap(); 
+    zip_extraction(&zip_conf.zip_file, &zip_conf.output_folder).unwrap(); 
     
 }
