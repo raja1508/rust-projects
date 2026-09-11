@@ -22,21 +22,23 @@ impl WorkflowConfig {
         Ok(())
     }
 
-    pub fn deserializer(wf_yaml: &String)-> Result<(), Box<dyn Error>>{
-        let wf: Self = serde_yaml::from_str(wf_yaml)?;
-        eprintln!("{:#?}", wf); 
-        Ok(())
-    }
     
-    pub fn deserialize_with_path(path: Option<&String>)-> Result<(), Box<dyn Error>>{
-        let  wf_path = match path {
-            Some(val) => val,
-            None => &String::from("./github/workflow/ci-cd.yaml")
-        }; 
+    pub fn deserializer(path: &String)-> Result<(), Box<dyn Error>>{
+        let folder_path = Path::new(path);  
+        let folder = fs::read_dir(&folder_path)?;
+        for file in folder.flatten() {
+            let path = file.path(); 
+            if path.is_file() {
+                if let Some(extension) = path.extension() {
+                    if extension == "yaml" || extension == "yml" {
+                        let contents = fs::read(path)?; 
+                        let wf: WorkflowConfig = serde_yaml::from_slice(&contents)?; 
+                        eprintln!("{:#?}", wf); 
+                    }
+                }
+            }
+        }
 
-        let contents = fs::read(wf_path)?; 
-        let wf: WorkflowConfig = serde_yaml::from_slice(&contents)?; 
-        eprintln!("{:#?}", wf); 
         Ok(())
     }
     

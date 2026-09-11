@@ -57,7 +57,7 @@ pub enum RunnerImage {
 #[serde(rename_all = "snake_case")]
 pub enum ShellEnvironment {
     Bash,
-    Sh,
+    Zsh,
     Powershell,
     Cmd,
 }
