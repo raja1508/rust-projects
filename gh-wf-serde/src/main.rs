@@ -1,8 +1,7 @@
 use std::process; 
-
 use dialoguer::{Select, theme::ColorfulTheme}; 
+use gh_wf_serde::*; 
 
-use gh_wf_serde::{workflow_cli::{create_yaml_file_cli, deserialize_yaml_file_cli}, *}; 
 fn main() {
     eprintln!("-------------- GITHUB WORKFLOW SERIALIZER DESERIALIZER --------------");
     eprintln!("-------------- 🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀🦀 --------------"); 
