@@ -31,27 +31,16 @@ impl Game {
             // generate new food location
             self.generate_food(); 
             self.score += 1; 
-            let (x, y) = self.snake.get(self.snake.len() - 1).unwrap();
-            let (nx, ny) = if x + 1 < self.width {
-                (x + 1, *y)
-            }else if y + 1 < self.height{
-                (*x, y + 1)
-            } else if x - 1 > 0 {
-                (x - 1, *y)
-            }
-            else {
-                (*x, y - 1)
-            }; 
-
-            self.snake.push((nx, ny)); 
  
+        }else {
+            let x = self.snake.pop().unwrap();
+            self.last_trail = Some(x); 
         };
 
         let mut snake = VecDeque::from(self.snake.clone()); 
         snake.push_front(new_head);
-        let x = snake.pop_back().unwrap();
         self.snake = Vec::from(snake);
-        self.last_trail = Some(x); 
+    
     }
 
     pub fn resume_or_pause(&mut self) {
