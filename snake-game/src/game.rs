@@ -5,7 +5,9 @@ pub struct Game {
     pub height: u16,
     pub score: u16,
     pub is_paused: bool,
-    pub is_live: bool
+    pub is_live: bool,
+    pub last_trail: Option<(u16, u16)>,
+    pub wall: Vec<(u16, u16)>
 }
 
 pub enum Direction {

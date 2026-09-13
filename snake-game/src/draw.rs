@@ -1,52 +1,43 @@
 use crossterm::{
-    cursor::MoveTo,
-    execute, queue,
-    style::{Color, Print, ResetColor, SetForegroundColor},
-    terminal::{Clear, ClearType},
+    cursor::{self}, execute, queue, style::{self, Stylize}, terminal,
 };
 use std::io::{self, Write};
 use crate::Game;
 
 
 impl Game {
-pub fn draw(&self, stdout: &mut io::Stdout) -> io::Result<()> {
-    // no Clear::All here anymore — do it once at startup instead
-
-    // border only needs to be drawn once too — move it out of the
-    // per-frame draw and draw it a single time before the loop starts
-
-    // --- erase previous frame's dynamic content ---
-    // (requires storing previous snake body + previous food if it moved)
-    // simplest: just blank the interior region each frame instead of
-    // the whole terminal, since interior is much smaller than a full clear
-    for y in 1..=self.height {
-        queue!(stdout, MoveTo(1, y), Print(" ".repeat(self.width as usize)))?;
+    pub fn draw_board(&mut self, stdout: &mut io::Stdout) -> io::Result<()> {
+        self.wall.pop(); 
+        execute!(stdout, terminal::Clear(terminal::ClearType::All))?; 
+        // execute!(stdout, SetForegroundColor(Color::Blue))?; 
+        for x in 0..=self.width {
+            for y in 0..=self.height {
+                if x == 0 || x == self.width || y == 0 || y == self.height {
+                    self.wall.push((x,y));
+                    queue!(stdout, cursor::MoveTo(x, y), style::PrintStyledContent("█".magenta()))?; 
+                }
+            }
+        }
+        stdout.flush()?; 
+        Ok(())
     }
 
-    // --- draw snake ---
-    queue!(stdout, SetForegroundColor(Color::Green))?;
-    for &(x, y) in &self.snake {
-        queue!(stdout, MoveTo(x + 1, y + 1), Print("■"))?;
-    }
-    queue!(stdout, ResetColor)?;
-
-    // --- draw food ---
-    queue!(stdout, SetForegroundColor(Color::Red))?;
-    queue!(stdout, MoveTo(self.food.0 + 1, self.food.1 + 1), Print("●"))?;
-    queue!(stdout, ResetColor)?;
-
-    // --- score / status ---
-    queue!(stdout, MoveTo(0, self.height + 3), Print(format!("Score: {}   ", self.score)))?;
-
-    if self.is_paused {
-        queue!(stdout, MoveTo(0, self.height + 4), Print("-- PAUSED --   "))?;
-    } else if !self.is_live {
-        queue!(stdout, MoveTo(0, self.height + 4), Print("-- GAME OVER --"))?;
-    } else {
-        queue!(stdout, MoveTo(0, self.height + 4), Print("               "))?;
+    pub fn draw_food(&self , stdout: &mut io::Stdout) -> io::Result<()>{
+        let (x,y) = self.food; 
+        queue!(stdout, cursor::MoveTo(x, y), style::PrintStyledContent("▣".red()))?;
+        stdout.flush()?; 
+        Ok(())
     }
 
-    stdout.flush()?;
-    Ok(())
-}
+    pub fn draw_snake(&self , stdout: &mut io::Stdout) -> io::Result<()>{
+        if let Some((x, y)) = self.last_trail {
+            queue!(stdout, cursor::MoveTo(x, y), style::Print(" "))?; 
+        }
+        for value in self.snake.iter(){
+            let (x, y ) = value; 
+            queue!(stdout, cursor::MoveTo(*x, *y), style::PrintStyledContent("■".green()))?;
+        }
+        stdout.flush()?; 
+        Ok(())
+    }
 }
