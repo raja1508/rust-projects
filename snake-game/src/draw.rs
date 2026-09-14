@@ -33,9 +33,11 @@ impl Game {
         if let Some((x, y)) = self.last_trail {
             queue!(stdout, cursor::MoveTo(x, y), style::Print(" "))?; 
         }
+
+        // ■
         for value in self.snake.iter(){
             let (x, y ) = value; 
-            queue!(stdout, cursor::MoveTo(*x, *y), style::PrintStyledContent("■".green()))?;
+            queue!(stdout, cursor::MoveTo(*x, *y), style::PrintStyledContent("█".green()))?;
         }
         stdout.flush()?; 
         Ok(())

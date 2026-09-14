@@ -54,13 +54,15 @@ fn main() {
             } 
         }
 
-    
-            if !game.is_paused {
-                game.draw_snake(&mut stdout).unwrap(); 
-                game.draw_food(&mut stdout).unwrap();
-            }
+        
+        // if last_tick.elapsed() > tick_rate {
 
+        if !game.is_paused {
+            game.draw_snake(&mut stdout).unwrap(); 
+            game.draw_food(&mut stdout).unwrap();
+        }
             // last_tick = Instant::now();  
+        // }
     }
 
     terminal::disable_raw_mode().unwrap(); 

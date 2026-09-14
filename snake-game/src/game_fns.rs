@@ -53,7 +53,7 @@ impl Game {
             let x = rand::thread_rng().gen_range(0..self.width - 2); 
             let y = rand::thread_rng().gen_range(0..self.height - 2);
 
-            if !self.snake.contains(&(x, y)) {
+            if !self.snake.contains(&(x, y)) && !self.wall.contains(&(x, y)){
                 self.food = (x, y);  
                 break;
             }
